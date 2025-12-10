@@ -5,7 +5,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-username/simple-springboot.git'
+                git 'https://github.com/balakrishna1987-hub/Java-docker-jenkins-demo.git'
             }
         }
 
