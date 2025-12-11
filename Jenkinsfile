@@ -1,36 +1,48 @@
 pipeline {
     agent any
 
-    stages {
+    environment {
+        DOCKER_IMAGE = "simple-java-app"
+    }
 
-        stage('Checkout') {
+    stages {
+        stage('Clone Repository') {
             steps {
-                git branch: 'main', url:'https://github.com/balakrishna1987-hub/Java-docker-jenkins-demo.git'
+                git 'https://github.com/balakrishna1987-hub/Java-docker-jenkins-demo' 
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build Maven Project') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean install'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t simple-springboot .'
+                script {
+                    // Build the Docker image
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                }
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Push Docker Image') {
             steps {
-                sh 'docker stop simple-springboot || true'
-                sh 'docker rm simple-springboot || true'
+                script {
+                    // Push the image to Docker Hub (optional)
+                    sh "docker tag ${DOCKER_IMAGE} yourdockerhubusername/${DOCKER_IMAGE}:latest"
+                    sh "docker push yourdockerhubusername/${DOCKER_IMAGE}:latest"
+                }
             }
         }
 
-        stage('Run New Container') {
+        stage('Deploy') {
             steps {
-                sh 'docker run -d -p 8081:8080 --name simple-springboot simple-springboot'
+                script {
+                    // Run the Docker container
+                    sh "docker run -d -p 8080:8080 ${DOCKER_IMAGE}"
+                }
             }
         }
     }
