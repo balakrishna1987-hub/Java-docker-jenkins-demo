@@ -30,7 +30,7 @@ pipeline {
 
         stage('Run New Container') {
             steps {
-                sh 'docker run -d -p 8080:8080 --name simple-springboot simple-springboot'
+                sh 'docker run -d -p 8081:8080 --name simple-springboot simple-springboot'
             }
         }
     }
